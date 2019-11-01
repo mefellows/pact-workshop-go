@@ -1,10 +1,10 @@
-TEST?=./...
-
 include ./make/config.mk
 
 install:
-	@echo "--- Installing Pact CLI dependencies"
-	curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | bash
+	@if [ ! -d pact/bin ]; then\
+		echo "--- Installing Pact CLI dependencies";\
+		curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | bash;\
+    fi
 
 run-consumer:
 	@go run consumer/client/cmd/main.go
