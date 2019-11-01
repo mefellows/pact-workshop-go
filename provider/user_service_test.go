@@ -30,6 +30,10 @@ func TestPactProvider(t *testing.T) {
 		PactURLs:           []string{filepath.FromSlash(fmt.Sprintf("%s/goadminservice-gouserservice.json", os.Getenv("PACT_DIR")))},
 		ProviderVersion:    "1.0.0",
 		StateHandlers:      stateHandlers,
+		BeforeEach: func() error {
+			userRepository = sallyExists
+			return nil
+		},
 	})
 
 	if err != nil {
@@ -45,10 +49,6 @@ var stateHandlers = types.StateHandlers{
 	},
 	"User sally does not exist": func() error {
 		userRepository = sallyDoesNotExist
-		return nil
-	},
-	"User is not authenticated": func() error {
-		userRepository = sallyExists
 		return nil
 	},
 }
@@ -89,18 +89,6 @@ var sallyExists = &repository.UserRepository{
 }
 
 var sallyDoesNotExist = &repository.UserRepository{}
-
-var sallyUnauthorized = &repository.UserRepository{
-	Users: map[string]*model.User{
-		"sally": &model.User{
-			FirstName: "Jean-Marie",
-			LastName:  "de La Beaujardière😀😍",
-			Username:  "sally",
-			Type:      "blocked",
-			ID:        10,
-		},
-	},
-}
 
 // Setup the Pact client.
 func createPact() dsl.Pact {
